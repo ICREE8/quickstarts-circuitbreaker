@@ -11,17 +11,18 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  * DO NOT USE THIS CODE IN PRODUCTION.
  */
 
- /**
+/**
  * THIS IS AN EXAMPLE OF A CONTRACT FOR CIRCUIT BREAKER. IT HAS 2 PRIMARY FUNCTIONS: (A) TO CHECK FOR A CERTAIN CONDITION AND (B) TO EXECUTE AN ACTION
  * THIS IS A FLEXIBLE CONTRACT THAT CAN BE USED TO BUILD ANY CONDITION SET AND ANY EXECUTION. IN THIS CASE THE CONDITION BEING CHECKED IS THE PRICE OF AN ASSET
- * AND THE ACTION BEING EXECUTED IS INCREMENTING A COUNTER. THIS CONTRACT BECOMES AN INPUT INTO AN UPKEEP CONTRACT FOR MANY DIFFERENT CIRCUIT BREAKING 
- * CONDITIONS. SO THIS WAY, THE UPKEEP CONTRACT REMAINS THE SAME, BUT USING CHECK DATA YOU CAN PASS IN A CONTRACT LIKE THIS AS A CUSTOMIZABLE CIRCUIT BREAKER 
+ * AND THE ACTION BEING EXECUTED IS INCREMENTING A COUNTER. THIS CONTRACT BECOMES AN INPUT INTO AN UPKEEP CONTRACT FOR MANY DIFFERENT CIRCUIT BREAKING
+ * CONDITIONS. SO THIS WAY, THE UPKEEP CONTRACT REMAINS THE SAME, BUT USING CHECK DATA YOU CAN PASS IN A CONTRACT LIKE THIS AS A CUSTOMIZABLE CIRCUIT BREAKER
  *
  */
+// 0x66AcF48f7d82dfb166707f9331f852E17438ab2a Contract address after deployment
 
-contract ExampleDataConsumerV3 is Ownable{
+contract ExampleDataConsumerV3 is Ownable {
     AggregatorV3Interface internal dataFeed;
-    
+
     uint256 public counter;
     int public maxbalance;
     bool emergencyPossible;
@@ -29,17 +30,22 @@ contract ExampleDataConsumerV3 is Ownable{
     event emergencyActionPerformed(uint256 counter, address feedAddress);
     bool circuitbrokenflag;
     int currentAnswer;
+
     /**
      * Network: Sepolia
      */
-    constructor(int _maxbalance, address _feedAddress, bool _emergencyPossible) {
+    constructor(
+        int _maxbalance,
+        address _feedAddress,
+        bool _emergencyPossible
+    ) {
         dataFeed = AggregatorV3Interface(_feedAddress);
         maxbalance = _maxbalance;
         counter = 0;
         emergencyPossible = _emergencyPossible;
         feedAddress = _feedAddress;
     }
-    
+
     /**
      * Returns true if the price is greater than a certain value.
      */
@@ -49,13 +55,12 @@ contract ExampleDataConsumerV3 is Ownable{
     }
 
     /**
-    * executes emergency action
-    */
+     * executes emergency action
+     */
     function executeEmergencyAction() external {
-            counter+= 1;
-            circuitbrokenflag = true;
-            emit emergencyActionPerformed(counter, feedAddress);
-
+        counter += 1;
+        circuitbrokenflag = true;
+        emit emergencyActionPerformed(counter, feedAddress);
     }
 
     // Function to view the number of times emergency was invoked
@@ -75,7 +80,7 @@ contract ExampleDataConsumerV3 is Ownable{
         maxbalance = max;
     }
 
-    function currentfeedAnswer() external view returns(int) {
+    function currentfeedAnswer() external view returns (int) {
         return currentAnswer;
     }
 
